@@ -1,0 +1,30 @@
+version: "3.8"
+services:
+  nginx:
+    build: ./requirements/nginx
+    container_name: nginx
+    image: nginx
+    volumes:
+      - /home/hhattaki/data/wordpress:/var/www/wordpress
+    ports:
+      - 443:443
+  mariaDB:
+    build: ./requirements/mariadb
+    container_name: mariadb
+    image: mariadb
+    env_file:
+      - ./.env
+    volumes:
+      - /home/hhattaki/data/DB:/var/lib/mysql
+    ports:
+        - 3306:3306
+  wordpress:
+    build: ./requirements/wordpress
+    container_name: wordpress
+    image: wordpress
+    env_file:
+      - ./.env
+    volumes:
+      - /home/hhattaki/data/wordpress:/var/www/wordpress
+    ports:
+      - 9000:9000
