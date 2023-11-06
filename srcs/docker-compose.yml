@@ -4,10 +4,15 @@ services:
     build: ./requirements/nginx
     container_name: nginx
     image: nginx
+    depends_on:
+      - wordpress
     volumes:
       - /home/hhattaki/data/wordpress:/var/www/wordpress
+    networks:
+      - inception
     ports:
       - 443:443
+
   mariaDB:
     build: ./requirements/mariadb
     container_name: mariadb
@@ -15,16 +20,50 @@ services:
     env_file:
       - ./.env
     volumes:
-      - /home/hhattaki/data/DB:/var/lib/mysql
-    ports:
-        - 3306:3306
+      - db:/var/lib/mysql
+    networks:
+      - inception
+
   wordpress:
     build: ./requirements/wordpress
     container_name: wordpress
+    depends_on:
+      - mariaDB
     image: wordpress
     env_file:
       - ./.env
     volumes:
-      - /home/hhattaki/data/wordpress:/var/www/wordpress
-    ports:
-      - 9000:9000
+      - wp:/var/www/wordpress
+    networks:
+      - inception
+
+  adminer:
+    build: ./requirements/bonus/adminer
+    container_name: adminer
+    depends_on:
+      - mariaDB
+    image: adminer
+    env_file:
+      - ./.env
+    volumes:
+      - wp:/var/www/html/adminer
+    networks:
+      - inception
+
+volumes:
+  db:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/hhattaki/data/DB
+      o: bind
+  wp:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/hhattaki/data/wordpress
+      o: bind
+
+networks:
+  inception:
+    name: inception

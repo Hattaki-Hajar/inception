@@ -1,4 +1,5 @@
 #!/bin/sh
+sleep 10
 wp core download --path=/var/www/wordpress --allow-root
 cd /var/www/wordpress
 wp core config --dbhost=mariadb --dbname=$DB_NAME --dbuser=$MYSQL_USER --dbpass=$MYSQL_PASSWORD --allow-root
