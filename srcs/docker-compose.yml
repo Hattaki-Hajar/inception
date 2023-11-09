@@ -12,6 +12,7 @@ services:
       - inception
     ports:
       - 443:443
+    restart: always
 
   mariaDB:
     build: ./requirements/mariadb
@@ -23,6 +24,7 @@ services:
       - db:/var/lib/mysql
     networks:
       - inception
+    restart: always
 
   wordpress:
     build: ./requirements/wordpress
@@ -36,6 +38,7 @@ services:
       - wp:/var/www/wordpress
     networks:
       - inception
+    restart: always
 
   adminer:
     build: ./requirements/bonus/adminer
@@ -49,6 +52,35 @@ services:
       - wp:/var/www/html/adminer
     networks:
       - inception
+    restart: always
+
+  redis:
+    build: ./requirements/bonus/redis
+    container_name: redis
+    depends_on:
+      - wordpress
+    image: redis
+    env_file:
+      - ./.env
+    volumes:
+      - wp:/var/www/wordpress
+    networks:
+      - inception
+    restart: always
+
+  portainer:
+    build: ./requirements/bonus/portainer
+    container_name: portainer
+    image: portainer
+    env_file:
+      - ./.env
+    ports:
+      - "127.0.1.15:80:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - inception
+    restart: always
 
 volumes:
   db:
