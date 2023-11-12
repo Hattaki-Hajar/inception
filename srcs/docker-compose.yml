@@ -82,6 +82,30 @@ services:
       - inception
     restart: always
 
+  ftp:
+    build: ./requirements/bonus/ftp
+    container_name: ftp
+    depends_on:
+      - wordpress
+    image: ftp
+    env_file:
+      - ./.env
+    volumes:
+      - wp:/home/spicy/ftp_directory/ftp_data
+    ports:
+      - "127.0.1.12:21:21"
+    networks:
+      - inception
+    restart: always
+
+  website:
+    build: ./requirements/bonus/website
+    container_name: website
+    image: website
+    ports:
+      - 127.0.1.16:8080:8080
+    restart: always
+
 volumes:
   db:
     driver: local
@@ -95,6 +119,11 @@ volumes:
       type: none
       device: /home/hhattaki/data/wordpress
       o: bind
+  # ws:
+  #   driver: local
+  #   driver_opts:
+  #     type: none
+  #     device: /home/hhattaki/data/site
 
 networks:
   inception:
